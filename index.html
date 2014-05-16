@@ -12,9 +12,21 @@
         <script src="tick.min.js"></script>
         <script src="traffic.js"></script>
         <script type="text/javascript">
+            function bytes(bytes, label) {
+                if (bytes == 0) return '';
+                var s = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+                var e = Math.floor(Math.log(bytes)/Math.log(1024));
+                var value = ((bytes/Math.pow(1024, Math.floor(e))).toFixed(2));
+                e = (e<0) ? (-e) : e;
+                if (label) value += ' ' + s[e];
+                return value;
+            }
 
             $(document).ready(function(){
                 var traffic_data_c = traffic_data || []
+
+                var KB = 1024
+                var MB = 1024*1024
 
                 total_traffic_data = []
                 download_traffic_data = []
@@ -74,7 +86,43 @@
                             valueDecimals : 2
                         },
                         color: 'rgb(215, 57, 53)',
-                    }]
+                    }],
+                    tooltip: {
+                        formatter: function() {
+                            var o = '';
+                            o += tick(o.x).toString()
+                            o += '<br>'
+                            for (var i = 0; i < this.points.length; i++) {
+                                o += '<strong>'
+                                o += this.points[i].series.name
+                                o += '</strong>'
+                                o += ' : '
+                                o += bytes(this.points[i].y, true)
+                                o += '<br>'
+                            };
+
+                            return o;
+                        }
+                    },
+                    yAxis: {
+                        opposite: false,
+                         tickPositioner: function(min, max) {
+
+                            var v = Math.pow(1024, Math.floor(Math.log(max)/Math.log(1024)))
+                            var vv = Math.ceil(max / v) * v;
+                            var vd = vv / 10;
+                            var tickPositions = [];
+
+                            for (pos = 0; pos <= vv+vd; pos += vd) {
+                                tickPositions.push(pos);
+                            }
+                            return tickPositions;
+
+                        },
+                        labels: {
+                            formatter: function() { return bytes(this.value, true); }
+                        }
+                    }
                 });
 
 
