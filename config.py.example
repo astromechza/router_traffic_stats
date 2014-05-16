@@ -1,0 +1,14 @@
+###################
+## CONFIGURATION ##
+###################
+# router ip address
+router_host = ''
+
+# router username
+router_user = 'user'
+
+# router password
+router_pwd = 'password'
+
+# file destination
+output_dir = '.'
