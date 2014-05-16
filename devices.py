@@ -23,7 +23,7 @@ wired_only_regex = re.compile("Wired Devices([\s\S]*?)Wireless Devices", re.MULT
 
 devices = hostnames_regex.findall(stuff)
 
-if config.include_wireless:
+if not config.include_wireless:
     wiredregion = wired_only_regex.findall(stuff)[0]
     devices = hostnames_regex.findall(wiredregion)
 
