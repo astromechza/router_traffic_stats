@@ -15,3 +15,10 @@ output_dir = '.'
 
 # include wireless devices in connection events? (True/False)
 include_wireless = False
+
+# local ping test. ISP website?
+ping_local = ''
+
+# remote ping test
+ping_remote = '8.8.8.8'
+
