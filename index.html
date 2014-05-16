@@ -11,6 +11,7 @@
         <script src="http://code.highcharts.com/stock/highstock.js"></script>
         <script src="tick.min.js"></script>
         <script src="traffic.js"></script>
+        <script src="devices.js"></script>
         <script type="text/javascript">
             function bytes(bytes, label) {
                 if (bytes == 0) return '';
@@ -24,6 +25,7 @@
 
             $(document).ready(function(){
                 var traffic_data_c = traffic_data || []
+                var device_data_c = device_data || []
 
                 var KB = 1024
                 var MB = 1024*1024
@@ -44,6 +46,19 @@
                     upload_traffic_data.push({
                         x: dt.valueOf(),
                         y: traffic_data_c[i][1][0]
+                    })
+                };
+
+
+                eventflags = []
+
+                var events = device_data_c['events']
+                for (var i = 0; i < events.length; i++) {
+                    dt = tick(events[i][0]*1000)
+                    eventflags.push({
+                        x: dt.valueOf(),
+                        title: '!',
+                        text: events[i][1]
                     })
                 };
 
@@ -70,6 +85,7 @@
                             valueDecimals : 2
                         },
                         color: 'rgb(0, 162, 232)',
+                        id : 'totaltrafficseries'
                     },{
                         name : 'Download traffic',
                         data : download_traffic_data,
@@ -86,20 +102,30 @@
                             valueDecimals : 2
                         },
                         color: 'rgb(215, 57, 53)',
+                    },{
+                        type: 'flags',
+                        data: eventflags,
+                        onSeries : 'totaltrafficseries',
+                        shape : 'circlepin',
+                        width : 12
                     }],
                     tooltip: {
                         formatter: function() {
                             var o = '';
                             o += tick(this.x).toString()
                             o += '<br>'
-                            for (var i = 0; i < this.points.length; i++) {
-                                o += '<strong>'
-                                o += this.points[i].series.name
-                                o += '</strong>'
-                                o += ' : '
-                                o += bytes(this.points[i].y, true)
-                                o += '<br>'
-                            };
+                            if (this.points != undefined) {
+                                for (var i = 0; i < this.points.length; i++) {
+                                    o += '<strong>'
+                                    o += this.points[i].series.name
+                                    o += '</strong>'
+                                    o += ' : '
+                                    o += bytes(this.points[i].y, true)
+                                    o += '<br>'
+                                };
+                            } else {
+                                o += this.point.text
+                            }
 
                             return o;
                         }
