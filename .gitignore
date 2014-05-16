@@ -2,3 +2,5 @@ config.py
 traffic.json
 traffic.js
 *.pyc
+devices.json
+devices.js
