@@ -103,6 +103,7 @@
                         },
                         color: 'rgb(215, 57, 53)',
                     },{
+                        name: 'Events'
                         type: 'flags',
                         data: eventflags,
                         onSeries : 'totaltrafficseries',
@@ -129,6 +130,10 @@
 
                             return o;
                         }
+                    },
+
+                    legend: {
+                        enabled: true
                     },
 
                     rangeSelector: {
