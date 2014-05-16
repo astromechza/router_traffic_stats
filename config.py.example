@@ -12,3 +12,6 @@ router_pwd = 'password'
 
 # file destination
 output_dir = '.'
+
+# include wireless devices in connection events? (True/False)
+include_wireless = False

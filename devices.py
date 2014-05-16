@@ -18,8 +18,14 @@ response = opener.open(url)
 stuff = response.read()
 response.close()
 
-regex = re.compile("<b>192\.[\s\S]*?<b>(.*?)</b>", re.MULTILINE)
-devices = regex.findall(stuff)
+hostnames_regex = re.compile("<b>192\.[\s\S]*?<b>(.*?)</b>", re.MULTILINE)
+wired_only_regex = re.compile("Wired Devices([\s\S]*?)Wireless Devices", re.MULTILINE)
+
+devices = hostnames_regex.findall(stuff)
+
+if config.include_wireless:
+    wiredregion = wired_only_regex.findall(stuff)[0]
+    devices = hostnames_regex.findall(wiredregion)
 
 now = datetime.now()
 now_i = time.mktime(now.timetuple())
