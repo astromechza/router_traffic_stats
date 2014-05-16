@@ -57,7 +57,7 @@ if len(connected) > 0:
 if len(disconnected) > 0:
     event += 'Disconnected ' + ', '.join(list(disconnected)) + ' '
 
-if len(event) > 1:
+if event:
 
     contents_o['devices'] = list(set(devices))
 
