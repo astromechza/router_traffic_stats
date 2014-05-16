@@ -5,9 +5,8 @@
     </head>
     <body>
 
-        <div id="GraphContainer_traffic"></div>
+        <div id="GraphContainer_traffic" style="height: 800px"></div>
 
-        <div id="GraphContainer_pings"></div>
 
         <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
         <script src="http://code.highcharts.com/stock/highstock.js"></script>
@@ -127,6 +126,23 @@
                         onSeries : 'totaltrafficseries',
                         shape : 'circlepin',
                         width : 12
+                    },{
+                        name : 'Local ISP ping',
+                        data : average_ping_local_data,
+                        type : 'spline',
+                        tooltip : {
+                            valueDecimals : 2
+                        },
+                        yAxis: 1
+                    },{
+                        name : 'Remote 8.8.8.8 ping',
+                        data : average_ping_remote_data,
+                        type : 'spline',
+                        tooltip : {
+                            valueDecimals : 2
+                        },
+                        ting: 2,
+                        yAxis: 1
                     }],
                     tooltip: {
                         formatter: function() {
@@ -141,6 +157,7 @@
                                     o += ' : '
                                     o += bytes(this.points[i].y, true)
                                     o += '<br>'
+                                    console.log(this)
                                 };
                             } else {
                                 o += this.point.text
@@ -174,7 +191,7 @@
                         selected: 0
                     },
 
-                    yAxis: {
+                    yAxis: [{
                         opposite: false,
                          tickPositioner: function(min, max) {
 
@@ -191,62 +208,22 @@
                         },
                         labels: {
                             formatter: function() { return bytes(this.value, true); }
-                        }
-                    }
-                });
-
-                $('#GraphContainer_pings').highcharts('StockChart', {
-                    title : {
-                        text : 'Ping times'
-                    },
-
-                    xAxis: {
-                        ordinal: false
-                    },
-
-                    series : [{
-                        name : 'Local ISP ping',
-                        data : average_ping_local_data,
-                        type : 'spline',
-                        tooltip : {
-                            valueDecimals : 2
                         },
+                        height: '55%',
+                        title: {text: 'Traffic volume'}
                     },{
-                        name : 'Remote 8.8.8.8 ping',
-                        data : average_ping_remote_data,
-                        type : 'spline',
-                        tooltip : {
-                            valueDecimals : 2
-                        },
-                    }],
-
-                    rangeSelector: {
-                        buttons: [{
-                            type: 'day',
-                            count: 1,
-                            text: '1d'
-                        },{
-                            type: 'week',
-                            count: 1,
-                            text: '1w'
-                        },{
-                            type: 'month',
-                            count: 1,
-                            text: '1m'
-                        },{
-                            type: 'all',
-                            text: 'All'
-                        }],
-                        selected: 0
-                    },
-
-                    yAxis: {
                         opposite: false,
+                        top: '60%',
+                        offset: 0,
+                        height: '40%',
                         labels: {
-                            formatter: function() { return this.value + ' ms' }
-                        }
-                    }
+                            formatter: function() { return this.value + ' ms'; }
+                        },
+                        title: {text: 'Ping RTT'},
+                        gridLineDashStyle: 'LongDashDot'
+                    }]
                 });
+
 
 
             });
