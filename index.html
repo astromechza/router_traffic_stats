@@ -90,7 +90,7 @@
                     tooltip: {
                         formatter: function() {
                             var o = '';
-                            o += tick(o.x).toString()
+                            o += tick(this.x).toString()
                             o += '<br>'
                             for (var i = 0; i < this.points.length; i++) {
                                 o += '<strong>'
@@ -104,14 +104,19 @@
                             return o;
                         }
                     },
+
+                    rangeSelector: {
+                        enabled: false
+                    },
+
                     yAxis: {
                         opposite: false,
                          tickPositioner: function(min, max) {
 
                             var v = Math.pow(1024, Math.floor(Math.log(max)/Math.log(1024)))
                             var vv = Math.ceil(max / v) * v;
-                            var vd = vv / 10;
-                            var tickPositions = [];
+                            var vd = vv / 5;
+                            var tickPositions = [0];
 
                             for (pos = 0; pos <= vv+vd; pos += vd) {
                                 tickPositions.push(pos);
