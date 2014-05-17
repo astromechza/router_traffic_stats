@@ -1,9 +1,5 @@
 config.py
-traffic.json
-traffic.js
 *.pyc
-devices.json
-devices.js
-pings.json
-pings.js
 *.log
+data
+*_data.js
