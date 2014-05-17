@@ -7,6 +7,7 @@
 
         <div id="GraphContainer_traffic" style="height: 800px"></div>
 
+        <div id="ConnectedDevices"></div>
 
         <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
         <script src="http://code.highcharts.com/stock/highstock.js"></script>
@@ -64,6 +65,8 @@
                         text: events[i][1]
                     })
                 };
+
+                $('#ConnectedDevices').html('Currently Connected: ' + device_data_c['devices'].join(', '))
 
                 average_ping_remote_data = []
                 average_ping_local_data = []
