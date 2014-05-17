@@ -21,18 +21,18 @@ devices = [d for t in devices.values() for d in t]
 
 devices_by_mac = {}
 for d in devices:
-    devices_by_mac[d[2]] = d
+    devices_by_mac[d[2]] = {'hname': d[1], 'mac': d[2]}
 
 # load current traffic data
 devices_data = store.read('devices', {'connected': [], 'events': []})
 last_devices = devices_data['connected']
 last_devices_by_mac = {}
 for d in last_devices:
-    last_devices_by_mac[d[2]] = d
+    last_devices_by_mac[d['mac']] = d
 
 # calculate changes
-disconnected_by_mac = set(last_devices_by_mac) - set(devices_by_mac)
-connected_by_mac = set(devices_by_mac) - set(last_devices_by_mac)
+disconnected_by_mac = set(last_devices_by_mac.keys()) - set(devices_by_mac.keys())
+connected_by_mac = set(devices_by_mac.keys()) - set(last_devices_by_mac.keys())
 
 disconnected = [last_devices_by_mac[d] for d in disconnected_by_mac]
 connected = [devices_by_mac[d] for d in connected_by_mac]
@@ -49,7 +49,7 @@ if len(disconnected) > 0:
 
 if len(event.keys()) > 1:
 
-    devices_data['connected'] = list(set(devices))
+    devices_data['connected'] = devices_by_mac.values()
     devices_data['events'] += [event]
 
     print connected
