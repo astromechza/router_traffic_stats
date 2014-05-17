@@ -6,3 +6,4 @@ devices.json
 devices.js
 pings.json
 pings.js
+*.log

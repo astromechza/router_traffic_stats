@@ -10,7 +10,7 @@ import os.path
 import helpers
 
 # variables
-url = 'http://' + config.router_host + '/DEV_devices.htm'
+url = 'http://' + config.router_host + '/setup.cgi?todo=nbtscan_refresh&this_file=DEV_devices.htm&next_file=DEV_devices.htm&SID='
 
 # get devices html from router
 passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
@@ -34,6 +34,8 @@ if not config.include_wireless:
     wiredregion = wired_only_regex.findall(stuff)[0]
     devices = hostnames_regex.findall(wiredregion)
 
+print devices
+
 # build now time object
 now = datetime.now()
 now = now.replace(microsecond=0, second=0)
@@ -56,6 +58,8 @@ if len(connected) > 0:
 
 if len(disconnected) > 0:
     event += 'Disconnected ' + ', '.join(list(disconnected)) + ' '
+
+print event
 
 # if the event is worth mentioning
 if event:
