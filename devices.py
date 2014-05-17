@@ -7,8 +7,12 @@ import json
 import os
 import os.path
 
+import helpers
+
+# variables
 url = 'http://' + config.router_host + '/DEV_devices.htm'
 
+# get devices html from router
 passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
 passman.add_password(None, config.router_host, config.router_user, config.router_pwd)
 authhandler = urllib2.HTTPBasicAuthHandler(passman)
@@ -18,39 +22,34 @@ response = opener.open(url)
 stuff = response.read()
 response.close()
 
+# compile regex
 hostnames_regex = re.compile("<b>192\.[\s\S]*?<b>(.*?)</b>", re.MULTILINE)
 wired_only_regex = re.compile("Wired Devices([\s\S]*?)Wireless Devices", re.MULTILINE)
 
+# get connected devices
 devices = hostnames_regex.findall(stuff)
 
+# ignore wireless devices if needs be
 if not config.include_wireless:
     wiredregion = wired_only_regex.findall(stuff)[0]
     devices = hostnames_regex.findall(wiredregion)
 
+# build now time object
 now = datetime.now()
 now = now.replace(microsecond=0, second=0)
 now_i = time.mktime(now.timetuple())
 
-fn = 'devices'
-fn_dir = os.path.expanduser(config.output_dir)
-fn_dir = fn_dir if os.path.isabs(fn_dir) else os.path.abspath(fn_dir)
-fn_js = os.path.join(fn_dir, fn+'.js')
-fn_json = os.path.join(fn_dir, fn+'.json')
+# build filenames
+fn_js, fn_json = helpers.get_json_js_filenames(config.output_dir, 'devices')
 
-if not os.path.isdir(fn_dir):
-    os.makedirs(fn_dir)
+# load existing devices events
+contents_o = helpers.load_json_object(fn_json, {'devices': [], 'events': []})
 
-contents_o = {'devices': [], 'events': []}
-try:
-    with open(fn_json, 'r') as f:
-        contents_j = f.read()
-        contents_o = json.loads(contents_j)
-except Exception, e:
-    pass
-
+# calculate changes
 disconnected = set(contents_o['devices']) - set(devices)
 connected = set(devices) - set(contents_o['devices'])
 
+# create event string
 event = ''
 if len(connected) > 0:
     event += 'Connected ' + ', '.join(list(connected)) + ' '
@@ -58,18 +57,17 @@ if len(connected) > 0:
 if len(disconnected) > 0:
     event += 'Disconnected ' + ', '.join(list(disconnected)) + ' '
 
+# if the event is worth mentioning
 if event:
-
+    # update current devices
     contents_o['devices'] = list(set(devices))
 
+    # create data obj
     data = [now_i, event]
 
+    # append new data
     contents_o['events'] += [data]
 
-    with open(fn_json, 'w') as f:
-        contents_j = json.dumps(contents_o)
-        f.write(contents_j)
-
-    with open(fn_js, 'w') as f:
-        contents_j = json.dumps(contents_o)
-        f.write('var device_data =' + contents_j + ';')
+    # write out to js and json
+    helpers.dump_json_object(fn_json, contents_o)
+    helpers.dump_json_object_in_js(fn_js, contents_o, 'device_data')
