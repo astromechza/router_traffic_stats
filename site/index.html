@@ -284,16 +284,13 @@
                     }
                 };
 
-                console.log(download_traffic_data)
-                console.log(diff_traffic_data)
-
                 eventflags = []
 
                 var events = devices_data['events']
                 for (var i = 0; i < events.length; i++) {
                     eventi = devices_data['events'][i]
 
-                    dt = tick(events[i][0]).valueOf()
+                    dt = tick(events[i]['time']).valueOf()
 
                     message = ''
                     if ('connected' in eventi && eventi['connected'].length > 0) {
@@ -301,7 +298,6 @@
                         message += eventi['connected'].map(function(e){return e[1]}).join(', ')
                     }
 
-                    message = ''
                     if ('disconnected' in eventi && eventi['disconnected'].length > 0) {
                         message += 'Disconnected: '
                         message += eventi['disconnected'].map(function(e){return e[1]}).join(', ')
