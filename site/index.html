@@ -17,13 +17,27 @@
         <script src="pings.js"></script>
         <script type="text/javascript">
             function bytes(bytes, label) {
-                if (bytes == 0) return '';
+                if (bytes==0) return '0';
                 var s = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
                 var e = Math.floor(Math.log(bytes)/Math.log(1024));
                 var value = ((bytes/Math.pow(1024, Math.floor(e))).toFixed(2));
                 e = (e<0) ? (-e) : e;
                 if (label) value += ' ' + s[e];
                 return value;
+            }
+
+            function speed(bits, label) {
+                if (bits==0) return '0';
+                var s = ['bps', 'Kbps', 'Mbps', 'Gbps'];
+                var e = Math.floor(Math.log(bits)/Math.log(1024));
+                var value = ((bits/Math.pow(1024, Math.floor(e))).toFixed(2));
+                e = (e<0) ? (-e) : e;
+                if (label) value += ' ' + s[e];
+                return value;
+            }
+
+            function time(ms) {
+                return ms.toFixed(2) + ' ms'
             }
 
             $(document).ready(function(){
@@ -34,6 +48,7 @@
                 var KB = 1024
                 var MB = 1024*1024
 
+                diff_traffic_data = []
                 total_traffic_data = []
                 download_traffic_data = []
                 upload_traffic_data = []
@@ -51,6 +66,21 @@
                         x: dt.valueOf(),
                         y: traffic_data_c[i][1][0]
                     })
+                    if (i > 0) {
+                        var lastt = tick(traffic_data_c[i-1][0]).valueOf()
+                        var last = traffic_data_c[i-1][1][1]
+                        var currentt = tick(traffic_data_c[i][0]).valueOf()
+                        var current = traffic_data_c[i][1][1]
+                        var diff = current - last
+                        if (diff < 0) diff = current
+
+                        var t = currentt - lastt
+
+                        diff_traffic_data.push({
+                            x: dt.valueOf(),
+                            y: diff*8.0/t
+                        })
+                    }
                 };
 
 
@@ -145,6 +175,11 @@
                             valueDecimals : 2
                         },
                         yAxis: 1
+                    },{
+                        name : 'Consumed',
+                        data : diff_traffic_data,
+                        type : 'column',
+                        yAxis: 2
                     }],
                     tooltip: {
                         formatter: function() {
@@ -161,9 +196,11 @@
                                     o += ' : '
 
                                     if (s.yAxis.axisTitle.textStr == 'Ping RTT') {
-                                        o += p.y + ' ms'
-                                    } else {
+                                        o += time(p.y)
+                                    } else if (s.yAxis.axisTitle.textStr == 'Accumulated Traffic'){
                                         o += bytes(p.y, true)
+                                    } else {
+                                        o += speed(p.y, true)
                                     }
                                     o += '<br>'
                                 };
@@ -217,18 +254,30 @@
                         labels: {
                             formatter: function() { return bytes(this.value, true); }
                         },
-                        height: '55%',
-                        title: {text: 'Traffic volume'}
+                        height: '50%',
+                        title: {text: 'Accumulated Traffic'},
+                        min: 0
                     },{
                         opposite: false,
-                        top: '60%',
+                        top: '55%',
                         offset: 0,
-                        height: '40%',
+                        height: '20%',
                         labels: {
-                            formatter: function() { return this.value + ' ms'; }
+                            formatter: function() { return time(this.value); }
                         },
                         title: {text: 'Ping RTT'},
-                        gridLineDashStyle: 'LongDashDot'
+                        gridLineDashStyle: 'LongDashDot',
+                        min: 0
+                    },{
+                        opposite: false,
+                        top: '80%',
+                        offset: 0,
+                        height: '20%',
+                        labels: {
+                            formatter: function() { return speed(this.value, true); }
+                        },
+                        title: {text: 'Average Download Speed'},
+                        min: 0
                     }]
                 });
 
