@@ -9,13 +9,18 @@
 
         <div id="ConnectedDevices" style="color: #E0E0E3; font-family: sans-serif"></div>
 
+        <script src="traffic_data.js"></script>
+        <script src="devices_data.js"></script>
+        <script src="ping_data.js"></script>
+
         <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
         <script src="http://code.highcharts.com/stock/highstock.js"></script>
         <script src="tick.min.js"></script>
-        <script src="traffic.js"></script>
-        <script src="devices.js"></script>
-        <script src="pings.js"></script>
+
+
+
         <script type="text/javascript">
+
             function bytes(bytes, label) {
                 if (bytes==0) return '0';
                 var s = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
@@ -242,10 +247,7 @@
                 Highcharts.setOptions(Highcharts.theme);
             }
 
-            $(document).ready(function(){
-                var traffic_data_c = traffic_data || []
-                var device_data_c = device_data || []
-                var ping_data_c = ping_data || []
+            $(document).ready(function() {
 
                 var KB = 1024
                 var MB = 1024*1024
@@ -254,58 +256,79 @@
                 total_traffic_data = []
                 download_traffic_data = []
                 upload_traffic_data = []
-                for (var i = 0; i < traffic_data_c.length; i++) {
-                    dt = tick(traffic_data_c[i][0]*1000)
+
+                for (var i = 0; i < traffic_data.length; i++) {
+                    dt = tick(traffic_data[i]['time']).valueOf()
                     total_traffic_data.push({
-                        x: dt.valueOf(),
-                        y: traffic_data_c[i][1][2]
+                        x: dt,
+                        y: traffic_data[i]['data']['total']
                     })
                     download_traffic_data.push({
-                        x: dt.valueOf(),
-                        y: traffic_data_c[i][1][1]
+                        x: dt,
+                        y: traffic_data[i]['data']['download']
                     })
                     upload_traffic_data.push({
-                        x: dt.valueOf(),
-                        y: traffic_data_c[i][1][0]
+                        x: dt,
+                        y: traffic_data[i]['data']['upload']
                     })
                     if (i > 0) {
-                        var last = traffic_data_c[i-1][1][1]
-                        var current = traffic_data_c[i][1][1]
+                        var last = traffic_data[i-1]['data']['download']
+                        var current = traffic_data[i]['data']['download']
                         var diff = current - last
                         if (diff < 0) diff = current
+
                         diff_traffic_data.push({
-                            x: dt.valueOf(),
+                            x: dt,
                             y: diff
                         })
                     }
                 };
 
+                console.log(download_traffic_data)
+                console.log(diff_traffic_data)
 
                 eventflags = []
 
-                var events = device_data_c['events']
+                var events = devices_data['events']
                 for (var i = 0; i < events.length; i++) {
-                    dt = tick(events[i][0]*1000)
+                    eventi = devices_data['events'][i]
+
+                    dt = tick(events[i][0]).valueOf()
+
+                    message = ''
+                    if ('connected' in eventi && eventi['connected'].length > 0) {
+                        message += 'Connected: '
+                        message += eventi['connected'].map(function(e){return e[1]}).join(', ')
+                    }
+
+                    message = ''
+                    if ('disconnected' in eventi && eventi['disconnected'].length > 0) {
+                        message += 'Disconnected: '
+                        message += eventi['disconnected'].map(function(e){return e[1]}).join(', ')
+                    }
+
                     eventflags.push({
-                        x: dt.valueOf(),
+                        x: dt,
                         title: '!',
-                        text: events[i][1]
+                        text: message
                     })
                 };
 
-                $('#ConnectedDevices').html('Currently Connected: ' + device_data_c['devices'].join(', '))
+                $('#ConnectedDevices').html(
+                    'Currently Connected: ' + devices_data['connected'].map(function(e){return e[1]}).join(', ')
+                )
 
                 average_ping_remote_data = []
                 average_ping_local_data = []
-                for (var i = 0; i < ping_data_c.length; i++) {
-                    dt = tick(ping_data_c[i]['time']*1000)
+                for (var i = 0; i < ping_data.length; i++) {
+                    dt = tick(ping_data[i]['time']).valueOf()
                     average_ping_remote_data.push({
-                        x: dt.valueOf(),
-                        y: ping_data_c[i]['remote'][1]
+                        x: dt,
+                        y: ping_data[i]['remote']['avg']
                     })
                     average_ping_local_data.push({
-                        x: dt.valueOf(),
-                        y: ping_data_c[i]['local'][1]
+                        x: dt,
+                        y: ping_data[i]['local']['avg']
                     })
                 };
 
