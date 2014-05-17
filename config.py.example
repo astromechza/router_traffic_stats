@@ -11,7 +11,7 @@ router_user = 'user'
 router_pwd = 'password'
 
 # file destination
-output_dir = '.'
+output_dir = './site'
 
 # include wireless devices in connection events? (True/False)
 include_wireless = False
