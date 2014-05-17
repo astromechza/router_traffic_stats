@@ -395,7 +395,7 @@
                         },
                         yAxis: 1
                     },{
-                        name : 'Downloaded',
+                        name : 'Last 5 Minutes',
                         data : diff_traffic_data,
                         type : 'column',
                         yAxis: 2
@@ -496,7 +496,7 @@
                         labels: {
                             formatter: function() { return bytes(this.value, true); }
                         },
-                        title: {text: 'Total'},
+                        title: {text: 'Last 5 Minutes'},
                         min: 0
                     }]
                 });
