@@ -67,18 +67,13 @@
                         y: traffic_data_c[i][1][0]
                     })
                     if (i > 0) {
-                        var lastt = tick(traffic_data_c[i-1][0]).valueOf()
                         var last = traffic_data_c[i-1][1][1]
-                        var currentt = tick(traffic_data_c[i][0]).valueOf()
                         var current = traffic_data_c[i][1][1]
                         var diff = current - last
                         if (diff < 0) diff = current
-
-                        var t = currentt - lastt
-
                         diff_traffic_data.push({
                             x: dt.valueOf(),
-                            y: diff*8.0/t
+                            y: diff
                         })
                     }
                 };
@@ -176,7 +171,7 @@
                         },
                         yAxis: 1
                     },{
-                        name : 'Consumed',
+                        name : 'Downloaded',
                         data : diff_traffic_data,
                         type : 'column',
                         yAxis: 2
@@ -195,12 +190,10 @@
                                     o += '</strong>'
                                     o += ' : '
 
-                                    if (s.yAxis.axisTitle.textStr == 'Ping RTT') {
+                                    if (s.yAxis.axisTitle.textStr == 'Time') {
                                         o += time(p.y)
-                                    } else if (s.yAxis.axisTitle.textStr == 'Accumulated Traffic'){
-                                        o += bytes(p.y, true)
                                     } else {
-                                        o += speed(p.y, true)
+                                        o += bytes(p.y, true)
                                     }
                                     o += '<br>'
                                 };
@@ -255,7 +248,7 @@
                             formatter: function() { return bytes(this.value, true); }
                         },
                         height: '50%',
-                        title: {text: 'Accumulated Traffic'},
+                        title: {text: 'Total'},
                         min: 0
                     },{
                         opposite: false,
@@ -265,7 +258,7 @@
                         labels: {
                             formatter: function() { return time(this.value); }
                         },
-                        title: {text: 'Ping RTT'},
+                        title: {text: 'Time'},
                         gridLineDashStyle: 'LongDashDot',
                         min: 0
                     },{
@@ -274,9 +267,9 @@
                         offset: 0,
                         height: '20%',
                         labels: {
-                            formatter: function() { return speed(this.value, true); }
+                            formatter: function() { return bytes(this.value, true); }
                         },
-                        title: {text: 'Average Download Speed'},
+                        title: {text: 'Total'},
                         min: 0
                     }]
                 });
