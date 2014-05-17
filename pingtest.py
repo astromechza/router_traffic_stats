@@ -33,6 +33,7 @@ def pingcheck(remote):
 
 
 now = datetime.now()
+now = now.replace(microsecond=0, second=0)
 now_i = time.mktime(now.timetuple())
 
 ping_local = pingcheck(config.ping_local)

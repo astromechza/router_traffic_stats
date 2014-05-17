@@ -28,6 +28,7 @@ if not config.include_wireless:
     devices = hostnames_regex.findall(wiredregion)
 
 now = datetime.now()
+now = now.replace(microsecond=0, second=0)
 now_i = time.mktime(now.timetuple())
 
 fn = 'devices'

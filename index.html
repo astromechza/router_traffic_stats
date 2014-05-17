@@ -141,7 +141,6 @@
                         tooltip : {
                             valueDecimals : 2
                         },
-                        ting: 2,
                         yAxis: 1
                     }],
                     tooltip: {
@@ -151,13 +150,19 @@
                             o += '<br>'
                             if (this.points != undefined) {
                                 for (var i = 0; i < this.points.length; i++) {
+                                    var p = this.points[i]
+                                    var s = p.series
                                     o += '<strong>'
-                                    o += this.points[i].series.name
+                                    o += s.name
                                     o += '</strong>'
                                     o += ' : '
-                                    o += bytes(this.points[i].y, true)
+
+                                    if (s.yAxis.axisTitle.textStr == 'Ping RTT') {
+                                        o += p.y + ' ms'
+                                    } else {
+                                        o += bytes(p.y, true)
+                                    }
                                     o += '<br>'
-                                    console.log(this)
                                 };
                             } else {
                                 o += this.point.text

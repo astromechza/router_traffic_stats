@@ -30,9 +30,8 @@ stats = eval(m.groups(1)[0])
 today_s = stats[0][1:]
 today_i = map(lambda s : float(s.split('/')[0])*MB_to_bytes, today_s)
 now = datetime.now()
+now = now.replace(microsecond=0, second=0)
 now_i = time.mktime(now.timetuple())
-
-print now
 
 data = [now_i, today_i]
 
