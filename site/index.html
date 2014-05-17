@@ -9,6 +9,8 @@
 
         <div id="ConnectedDevices" style="color: #E0E0E3; font-family: sans-serif"></div>
 
+        <script src="mac_translate.js"></script>
+
         <script src="traffic_data.js"></script>
         <script src="devices_data.js"></script>
         <script src="ping_data.js"></script>
@@ -295,12 +297,12 @@
                     message = ''
                     if ('connected' in eventi && eventi['connected'].length > 0) {
                         message += 'Connected: '
-                        message += eventi['connected'].map(function(e){return e['hname']}).join(', ')
+                        message += eventi['connected'].map(function(e){return translate_mac(e['mac'], e['hname'])}).join(', ')
                     }
 
                     if ('disconnected' in eventi && eventi['disconnected'].length > 0) {
                         message += 'Disconnected: '
-                        message += eventi['disconnected'].map(function(e){return e['hname']}).join(', ')
+                        message += eventi['disconnected'].map(function(e){return translate_mac(e['mac'], e['hname'])}).join(', ')
                     }
 
                     eventflags.push({
@@ -311,7 +313,7 @@
                 };
 
                 $('#ConnectedDevices').html(
-                    'Currently Connected: ' + devices_data['connected'].map(function(e){return e['hname']}).join(', ')
+                    'Currently Connected: ' + devices_data['connected'].map(function(e){return translate_mac(e['mac'], e['hname'])}).join(', ')
                 )
 
                 average_ping_remote_data = []
