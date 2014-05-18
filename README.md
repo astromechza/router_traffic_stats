@@ -4,3 +4,5 @@ I have a NETGEAR DGN2200v3 router at home and needed a method of graphing the da
 
 ## How it works:
 Every 5 minutes cronjobs run update_traffic.py, update_devices.py, and update_pings.py. These scripts generate the javascript files that are loaded by the site and also store the dataset as a json object so that new data can be appended easily.
+
+![Screenshot](/../screenshots/screenshot.21.jpg?raw=true "Graph Interface")
